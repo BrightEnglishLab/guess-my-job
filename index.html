@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#244A73">
+  <title>Guess My Job! | My English World</title>
+  <style>
+    :root {
+      --navy: #244A73;
+      --yellow: #FFDE59;
+      --pale-blue: #EAF4FB;
+      --blue: #72BDEB;
+      --white: #FFFFFF;
+      --green: #DDF3E5;
+      --red: #FCE4E4;
+      --ink: #183957;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px 14px 40px;
+      background: #f7fbfe;
+      color: var(--navy);
+      font-family: "Nunito", "Trebuchet MS", Arial, sans-serif;
+    }
+    .app { max-width: 850px; margin: 0 auto; }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 0 0 18px;
+    }
+    .number {
+      width: 66px; height: 66px; flex: 0 0 66px;
+      display: grid; place-items: center;
+      border-radius: 50%; background: var(--yellow);
+      color: var(--navy); font-size: 38px; font-weight: 900;
+    }
+    h1 { margin: 0; font-size: clamp(30px, 6vw, 48px); line-height: 1.05; }
+    .subtitle { margin: 7px 0 0; font-size: 17px; line-height: 1.4; }
+    .panel {
+      background: var(--white);
+      border: 2px solid #d6ebf8;
+      border-radius: 24px;
+      padding: clamp(18px, 4vw, 30px);
+      box-shadow: 0 5px 18px rgba(36,74,115,.06);
+    }
+    .hero {
+      background: var(--pale-blue);
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 16px; margin-bottom: 16px;
+    }
+    .hero h2 { margin: 0 0 7px; font-size: 25px; }
+    .hero p { margin: 0; line-height: 1.5; }
+    .hero-icon { font-size: clamp(58px, 12vw, 90px); }
+    .topline {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; flex-wrap: wrap; margin-bottom: 18px;
+    }
+    .progress-wrap { flex: 1 1 220px; }
+    .progress-label { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 7px; }
+    .progress { height: 12px; background: #e6f0f7; border-radius: 20px; overflow: hidden; }
+    .progress > div { height: 100%; width: 0; background: var(--yellow); transition: width .25s ease; }
+    .score { background: #fff4c3; border-radius: 30px; padding: 9px 15px; font-weight: 900; }
+    .clue-card {
+      text-align: center; background: var(--pale-blue);
+      border-radius: 20px; padding: 24px 18px; margin-bottom: 18px;
+    }
+    .picture { font-size: 68px; line-height: 1.2; margin-bottom: 8px; }
+    .clue-tag {
+      display: inline-block; background: var(--yellow); border-radius: 30px;
+      padding: 6px 16px; font-weight: 900; margin-bottom: 12px;
+    }
+    .clue { font-size: clamp(20px, 4vw, 25px); font-weight: 800; line-height: 1.35; margin: 0; }
+    .question { margin: 0 0 13px; font-weight: 900; font-size: 18px; }
+    .options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .option {
+      border: 2px solid #b9ddf2; background: white; border-radius: 18px;
+      padding: 14px 8px; color: var(--navy); cursor: pointer;
+      font: inherit; font-weight: 900; min-height: 120px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .option:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--blue); }
+    .option .emoji { display: block; font-size: 42px; margin-bottom: 7px; }
+    .option:focus-visible, button:focus-visible { outline: 4px solid #f0b900; outline-offset: 3px; }
+    .option.correct { background: var(--green); border-color: #58a978; }
+    .option.wrong { background: var(--red); border-color: #d77b7b; }
+    .option:disabled { cursor: default; opacity: 1; }
+    .feedback {
+      min-height: 54px; margin: 16px 0 0; padding: 13px 16px;
+      border-radius: 14px; background: #f4f8fb; font-weight: 800;
+      line-height: 1.4; text-align: center;
+    }
+    .feedback.good { background: var(--green); color: #205b38; }
+    .feedback.try { background: #fff1d6; color: #795313; }
+    .controls { display: flex; justify-content: center; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .btn {
+      border: 0; border-radius: 30px; padding: 13px 24px; cursor: pointer;
+      background: var(--yellow); color: var(--navy); font: inherit;
+      font-weight: 900; font-size: 17px;
+    }
+    .btn.secondary { background: var(--pale-blue); border: 2px solid #b9ddf2; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .hidden { display: none !important; }
+    .result { text-align: center; }
+    .result .big { font-size: 76px; margin: 4px 0 8px; }
+    .result h2 { font-size: 32px; margin: 5px 0 8px; }
+    .result p { font-size: 19px; line-height: 1.5; }
+    .result-score { display: inline-block; background: var(--yellow); padding: 12px 24px; border-radius: 18px; font-size: 25px; font-weight: 900; }
+    footer { text-align: center; color: #55718b; font-size: 13px; margin-top: 18px; }
+    @media (max-width: 560px) {
+      body { padding: 16px 10px 28px; }
+      header { gap: 11px; }
+      .number { width: 54px; height: 54px; flex-basis: 54px; font-size: 31px; }
+      .hero { grid-template-columns: 1fr auto; }
+      .options { grid-template-columns: 1fr; }
+      .option { min-height: 78px; display: flex; align-items: center; gap: 14px; text-align: left; padding: 10px 16px; }
+      .option .emoji { margin: 0; width: 48px; flex: 0 0 48px; font-size: 35px; }
+      .clue-card { padding: 20px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="number">13</div>
+      <div>
+        <h1>Guess My Job!</h1>
+        <p class="subtitle">Read the clue, look at the pictures and choose the correct job.</p>
+      </div>
+    </header>
+
+    <section class="panel hero" id="intro">
+      <div>
+        <h2>Ready for the challenge?</h2>
+        <p>There are 12 mystery jobs. Choose the right profession and check your score at the end.</p>
+        <div class="controls" style="justify-content:flex-start">
+          <button class="btn" id="startBtn">Start the game</button>
+        </div>
+      </div>
+      <div class="hero-icon" aria-hidden="true">🧩</div>
+    </section>
+
+    <section class="panel hidden" id="game" aria-live="polite">
+      <div class="topline">
+        <div class="progress-wrap">
+          <div class="progress-label"><span id="progressText">Question 1 of 12</span><span id="progressPercent">0%</span></div>
+          <div class="progress"><div id="progressBar"></div></div>
+        </div>
+        <div class="score">⭐ Score: <span id="score">0</span></div>
+      </div>
+      <div class="clue-card">
+        <div class="picture" id="cluePicture" aria-hidden="true">🏫</div>
+        <div class="clue-tag">MYSTERY CLUE</div>
+        <p class="clue" id="clueText"></p>
+      </div>
+      <p class="question">Who am I?</p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">Choose one answer.</div>
+      <div class="controls">
+        <button class="btn" id="nextBtn" disabled>Next question</button>
+      </div>
+    </section>
+
+    <section class="panel result hidden" id="result">
+      <div class="big" id="resultEmoji">🏆</div>
+      <h2>Well done!</h2>
+      <p id="resultMessage"></p>
+      <div class="result-score" id="finalScore"></div>
+      <div class="controls">
+        <button class="btn" id="playAgainBtn">Play again</button>
+      </div>
+    </section>
+    <footer>My English World · Grade 4 · Guess My Job!</footer>
+  </main>
+
+  <script>
+    const jobs = [
+      { job: "teacher", emoji: "👩‍🏫", cluePic: "🏫", clue: "I work at a school. I teach children and help them learn new things.", options: ["teacher", "pilot", "farmer"], pictures: ["👩‍🏫", "👩‍✈️", "👨‍🌾"] },
+      { job: "doctor", emoji: "🧑‍⚕️", cluePic: "🩺", clue: "I work at a hospital. I examine sick people and help them feel better.", options: ["chef", "doctor", "artist"], pictures: ["👨‍🍳", "🧑‍⚕️", "🎨"] },
+      { job: "firefighter", emoji: "🧑‍🚒", cluePic: "🚒", clue: "I drive a fire engine and put out fires. I help keep people safe.", options: ["firefighter", "scientist", "dentist"], pictures: ["🧑‍🚒", "🧑‍🔬", "🦷"] },
+      { job: "chef", emoji: "👨‍🍳", cluePic: "🍽️", clue: "I work in a restaurant. I prepare meals and create new recipes.", options: ["nurse", "chef", "police officer"], pictures: ["👩‍⚕️", "👨‍🍳", "👮"] },
+      { job: "farmer", emoji: "👨‍🌾", cluePic: "🌱", clue: "I work on a farm. I grow crops and take care of animals.", options: ["farmer", "engineer", "teacher"], pictures: ["👨‍🌾", "👷", "👩‍🏫"] },
+      { job: "pilot", emoji: "👩‍✈️", cluePic: "✈️", clue: "I work with an airline. I fly airplanes to different places.", options: ["artist", "pilot", "doctor"], pictures: ["🎨", "👩‍✈️", "🧑‍⚕️"] },
+      { job: "artist", emoji: "🎨", cluePic: "🖌️", clue: "I create paintings and drawings. I use colours to make art.", options: ["artist", "dentist", "firefighter"], pictures: ["🎨", "🦷", "🧑‍🚒"] },
+      { job: "scientist", emoji: "🧑‍🔬", cluePic: "🔬", clue: "I work in a laboratory. I do experiments and learn about the world.", options: ["police officer", "scientist", "chef"], pictures: ["👮", "🧑‍🔬", "👨‍🍳"] },
+      { job: "dentist", emoji: "🦷", cluePic: "🪥", clue: "I check people's teeth and help them keep their mouths healthy.", options: ["dentist", "farmer", "nurse"], pictures: ["🦷", "👨‍🌾", "👩‍⚕️"] },
+      { job: "engineer", emoji: "👷", cluePic: "🏗️", clue: "I design and help build machines, bridges and structures.", options: ["teacher", "engineer", "pilot"], pictures: ["👩‍🏫", "👷", "👩‍✈️"] },
+      { job: "nurse", emoji: "👩‍⚕️", cluePic: "💉", clue: "I care for patients and help doctors in a hospital or clinic.", options: ["nurse", "artist", "firefighter"], pictures: ["👩‍⚕️", "🎨", "🧑‍🚒"] },
+      { job: "police officer", emoji: "👮", cluePic: "🚓", clue: "I help protect people and keep the community safe.", options: ["scientist", "chef", "police officer"], pictures: ["🧑‍🔬", "👨‍🍳", "👮"] }
+    ];
+
+    const $ = id => document.getElementById(id);
+    let order = [], current = 0, score = 0, answered = false;
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function startGame() {
+      order = shuffle(jobs);
+      current = 0;
+      score = 0;
+      $("score").textContent = score;
+      $("intro").classList.add("hidden");
+      $("result").classList.add("hidden");
+      $("game").classList.remove("hidden");
+      showQuestion();
+    }
+
+    function showQuestion() {
+      answered = false;
+      const item = order[current];
+      const percent = Math.round((current / order.length) * 100);
+      $("progressText").textContent = `Question ${current + 1} of ${order.length}`;
+      $("progressPercent").textContent = `${percent}%`;
+      $("progressBar").style.width = `${percent}%`;
+      $("cluePicture").textContent = item.cluePic;
+      $("clueText").textContent = item.clue;
+      $("feedback").className = "feedback";
+      $("feedback").textContent = "Choose one answer.";
+      $("nextBtn").disabled = true;
+      $("nextBtn").textContent = current === order.length - 1 ? "See my score" : "Next question";
+      const options = $("options");
+      options.innerHTML = "";
+      item.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = "option";
+        button.type = "button";
+        button.innerHTML = `<span class="emoji" aria-hidden="true">${item.pictures[index]}</span><span>${option}</span>`;
+        button.addEventListener("click", () => chooseAnswer(button, option, item.job));
+        options.appendChild(button);
+      });
+    }
+
+    function chooseAnswer(button, chosen, correct) {
+      if (answered) return;
+      answered = true;
+      const buttons = [...$("options").querySelectorAll("button")];
+      buttons.forEach(b => {
+        b.disabled = true;
+        if (b.textContent.trim().toLowerCase() === correct) b.classList.add("correct");
+      });
+      if (chosen === correct) {
+        score++;
+        $("score").textContent = score;
+        $("feedback").className = "feedback good";
+        $("feedback").textContent = `Excellent! ${correct.charAt(0).toUpperCase() + correct.slice(1)} is correct!`;
+      } else {
+        button.classList.add("wrong");
+        $("feedback").className = "feedback try";
+        $("feedback").textContent = `Good try! The correct answer is ${correct}.`;
+      }
+      $("nextBtn").disabled = false;
+      $("progressBar").style.width = `${Math.round(((current + 1) / order.length) * 100)}%`;
+      $("progressPercent").textContent = `${Math.round(((current + 1) / order.length) * 100)}%`;
+    }
+
+    function nextQuestion() {
+      if (!answered) return;
+      current++;
+      if (current < order.length) showQuestion();
+      else showResults();
+    }
+
+    function showResults() {
+      $("game").classList.add("hidden");
+      $("result").classList.remove("hidden");
+      $("finalScore").textContent = `${score} / ${order.length} correct answers`;
+      $("resultEmoji").textContent = score >= 10 ? "🏆" : score >= 6 ? "🌟" : "💪";
+      $("resultMessage").textContent = score === 12
+        ? "Fantastic! You guessed every job correctly!"
+        : score >= 9
+          ? "Great work! You know lots of professions."
+          : score >= 6
+            ? "Good effort! Keep practising your job vocabulary."
+            : "Keep learning! Play again and try to improve your score.";
+      $("progressBar").style.width = "100%";
+    }
+
+    $("startBtn").addEventListener("click", startGame);
+    $("nextBtn").addEventListener("click", nextQuestion);
+    $("playAgainBtn").addEventListener("click", startGame);
+  </script>
+</body>
+</html>
